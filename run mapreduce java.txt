@@ -1,0 +1,49 @@
+Hadoop takes care of multi processing and distributed storage.
+- The more the merrier
+- teamork
+- Too many cooks spoil the broth.
+
+-- SSD transfer rate about 200 MB/s. Read 3 TB in about 4 hours.
+-- Hadoop reads 1,000 disks in parallel --> 3 TB in 15 seconds.  (2012)
+
+
+hadoop fs -ls
+hadoop fs -put
+hadoop fs -get
+hadoop fs -cp
+hadoop fs -rmdir /user/mc/shakespeare-wc-out
+hadoop fs -rm -R -skipTrash /user/mc/shakespeare-wc-out
+
+
+Map Reduce
+- Map : Distribute the work among the resources (CPUs andStorage). 
+- Reduce : Collect the work done and present as a summary.
+
+Hadoop Resource Manager does the detail work of distribution and collection so that the programmer does not have to worry about managing the resources.
+
+
+hadoop jar /usr/hdp/2.2.4.2-2/hadoop-mapreduce/hadoop-mapreduce-examples.jar wordcount /user/mc/shakespeare.txt /user/mc/shakespeare-wc-out
+
+hadoop fs -l /user/mc/shakespeare-wc-out
+  
+hadoop fs -cat /user/mc/shakespeare-wc-out/part-r-00000 | tail -n 50
+
+
+
+pyspark
+
+text=sc.textFile("/user/lab/shakespeare.txt")
+words=text.flatMap(lambda line: line.split())
+wordWithCount=words.map(lambda word:(word,1))
+words.take(10)
+words.count()
+
+
+counts = sc.textFile("/user/lab/shakespeare.txt") .flatMap(lambda line:line.split() ) .map(lambda word:(word,1)) .reduceByKey(lambda v1,v2:(v1+v2) )
+
+counts.take(10)
+
+counts.saveAsTextFile("/user/lab/Scount")
+
+(Notes from: Ryerson Course  Big Data Analytics Tools taught by Dr Sebnem Kuzulugil)
+
